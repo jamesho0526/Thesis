@@ -1,0 +1,14 @@
+# Generated datasets and experiment artifacts
+data/
+experiments/
+logs/
+
+# Python cache
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Environments
+.venv/
+env/
+.env
