@@ -112,8 +112,8 @@ experiments\paper_replication\
 ```
 
 The fixed 2000 S&P sample is under
-`data\paper_replication\sp500\filtered_1day`. China, Yahoo robustness checks,
-cross-market experiments, and other non-paper work belong under:
+`data\paper_replication\sp500\filtered_1day`. Yahoo data acquisition and the
+futures transfer experiment are kept separately under:
 
 ```text
 data\extensions\
@@ -154,6 +154,23 @@ MA5 and volume layout, computes training-set pixel mean/std for z-score
 normalization, and trains five independent seeds by default. The final test
 probabilities are the arithmetic mean of the five Softmax outputs and are
 written to `ensemble_predictions.csv`.
+
+### Applying the S&P model to futures
+
+The S&P ensemble can be used as a frozen cross-market predictor. This does
+not retrain on futures and reuses the S&P training pixel mean/std:
+
+```powershell
+uv run python .\scripts\predict_futures_with_sp500.py `
+  --data-root ..\data\extensions\futures\images_i5_r5 `
+  --checkpoint-dir .\experiments\paper_replication\sp500_i5_r5 `
+  --output-dir .\experiments\extensions\futures_with_sp500_model
+```
+
+The script writes `futures_predictions_from_sp500.csv` and `metrics.json`.
+Because futures are a time series rather than a stock cross-section, the
+reported metrics include directional accuracy, signal return, approximate
+annualized Sharpe, and approximate maximum drawdown.
 S&P data uses the paper's 1993--2000 versus 2001--2019 split. Futures data
 does not cover those years, so the trainer reports and uses a chronological
 70/30 year split instead.
