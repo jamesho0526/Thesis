@@ -1,0 +1,714 @@
+FirstRate Data完整130項
+
+代號
+商品
+類別
+ES
+E-mini S&P 500
+美國股指
+NQ
+E-mini Nasdaq-100
+美國股指
+MNQ
+Micro E-mini Nasdaq-100
+微型股指
+RTY
+E-mini Russell 2000
+美國股指
+GC／MGC
+Gold／Micro Gold
+貴金屬
+SI／SIL
+Silver／Micro Silver
+貴金屬
+CL／MCL
+WTI／Micro WTI Crude Oil
+能源
+ZS／ZM／ZL
+黃豆／豆粉／豆油
+農產品
+ZN／ZB／UB／TN
+美國公債期貨
+利率
+E6／J1／N6／MP
+歐元／日圓／紐幣／墨西哥披索
+外匯
+BTC／MBT／MET
+Bitcoin／Micro Bitcoin／Micro Ether
+加密資產
+FDAX／FESX／FXXP
+DAX／Euro Stoxx 50／Stoxx 600
+歐洲股指
+
+
+
+
+
+
+
+
+#
+代號
+官方英文名稱
+中文說明
+交易所
+1
+A6
+Australian Dollar Futures
+澳幣期貨
+CME
+2
+AD
+Canadian Dollar Futures
+加幣期貨
+CME
+3
+ALI
+Aluminum
+鋁期貨
+CME
+4
+B
+Brent Crude
+布蘭特原油期貨
+ICE
+5
+B6
+British Pound Futures
+英鎊期貨
+CME
+6
+BFX
+BEL 20
+比利時BEL 20股指期貨
+Euronext
+7
+BR
+Brazilian Real Futures
+巴西里拉期貨
+CME
+8
+BTC
+Bitcoin Futures
+比特幣期貨
+CME
+9
+BZ
+Brent Last Day Financial Futures
+布蘭特原油金融結算期貨
+NYMEX
+10
+C
+Cocoa Futures
+可可期貨
+ICE
+11
+CB
+Cash-Settled Butter
+現金結算奶油期貨
+CME
+12
+CC
+Cocoa
+可可期貨
+ICE
+13
+CL
+Crude Oil WTI Futures
+WTI原油期貨
+NYMEX
+14
+CNH
+USD/Offshore RMB
+美元／離岸人民幣期貨
+CME
+15
+CSC
+Cash-Settled Cheese
+現金結算起司期貨
+CME
+16
+CT
+Cotton #2 Futures
+2號棉花期貨
+ICE
+17
+DC
+Class III Milk
+第三級牛奶期貨
+CME
+18
+DX
+US Dollar Index Future
+美元指數期貨
+ICE
+19
+E1
+Swiss Franc Futures
+瑞士法郎期貨
+CME
+20
+E6
+Euro FX Futures
+歐元期貨
+CME
+21
+E7
+E-Mini Euro FX
+E-mini歐元期貨
+CME
+22
+EBM
+Milling Wheat Futures
+製粉小麥期貨
+Eurex
+23
+ER
+3-Month Euribor
+3個月EURIBOR期貨
+ICE
+24
+ES
+E-Mini S&P 500 Futures
+E-mini S&P 500期貨
+CME
+25
+ESG
+E-Mini S&P 500 ESG Futures
+E-mini S&P 500 ESG期貨
+CME
+26
+EW
+E-Mini S&P 400 MidCap Futures
+E-mini S&P 400中型股期貨
+CME
+27
+FBON
+Euro-BONO Futures
+西班牙長期公債期貨
+Eurex
+28
+FBTP
+Euro BTP Long-Bond Futures
+義大利長期公債期貨
+Eurex
+29
+FBTS
+Short-Term Euro-BTP
+義大利短期公債期貨
+Eurex
+30
+FCE
+CAC 40 Futures
+法國CAC 40股指期貨
+Euronext
+31
+FDAX
+DAX Futures
+德國DAX股指期貨
+Eurex
+32
+FDIV
+DivDAX
+德國DivDAX股指期貨
+Eurex
+33
+FDXM
+Mini DAX
+Mini DAX股指期貨
+Eurex
+34
+FDXS
+Micro DAX
+Micro DAX股指期貨
+Eurex
+35
+FESX
+Euro Stoxx 50 Futures
+Euro Stoxx 50股指期貨
+Eurex
+36
+FEU3
+Three-Month EURIBOR
+3個月EURIBOR期貨
+Eurex
+37
+FGBL
+Euro Bund Futures
+德國長期公債期貨
+Eurex
+38
+FGBM
+Euro Bobl Futures
+德國中期公債期貨
+Eurex
+39
+FGBS
+Euro-Schatz
+德國短期公債期貨
+Eurex
+40
+FGBX
+Euro-Buxl
+德國超長期公債期貨
+Eurex
+41
+FMWO
+MSCI World Index Futures
+MSCI世界指數期貨
+Eurex
+42
+FOAT
+Euro-OAT
+法國長期公債期貨
+Eurex
+43
+FSMX
+Mini-MDAX
+Mini MDAX股指期貨
+Eurex
+44
+FTDX
+TecDAX
+德國科技股指數期貨
+Eurex
+45
+FTI
+Amsterdam Index Futures
+荷蘭阿姆斯特丹股指期貨
+Euronext
+46
+FTUK
+FTSE 100 Futures
+英國FTSE 100股指期貨
+ICE
+47
+FVSA
+VSTOXX Futures
+歐洲波動率指數期貨
+Eurex
+48
+FXXP
+STOXX Europe 600 Index
+STOXX歐洲600指數期貨
+Eurex
+49
+G
+10-Year Long Gilt Futures
+英國10年期長期公債期貨
+ICE
+50
+GC
+Gold Futures
+黃金期貨
+CME
+51
+GF
+Feeder Cattle Futures
+育肥牛期貨
+CME
+52
+GSCI
+S&P GSCI Futures
+S&P GSCI商品指數期貨
+CME
+53
+HE
+Lean Hog Futures
+瘦肉豬期貨
+CME
+54
+HG
+Copper Futures
+銅期貨
+CME
+55
+HH
+Natural Gas
+天然氣金融結算期貨
+NYMEX
+56
+HO
+NY Harbor ULSD
+紐約港超低硫柴油期貨
+NYMEX
+57
+HRC
+US Midwest Hot-Rolled Coil Steel
+美國中西部熱軋鋼卷指數期貨
+CME
+58
+J1
+Japanese Yen Futures
+日圓期貨
+CME
+59
+J7
+E-Mini Japanese Yen
+E-mini日圓期貨
+CME
+60
+KC
+Coffee Futures
+阿拉比卡咖啡期貨
+ICE
+61
+KE
+Kansas City HRW Wheat Futures
+堪薩斯硬紅冬小麥期貨
+CME
+62
+KRW
+KRW/USD
+韓元／美元期貨
+CME
+63
+L
+3-Month Sterling Futures
+3個月英鎊利率期貨
+ICE
+64
+LBS
+Random Length Lumber Futures
+木材期貨
+CME
+65
+LE
+Live Cattle Futures
+活牛期貨
+CME
+66
+M2K
+Micro E-Mini Russell 2000
+微型Russell 2000股指期貨
+CME
+67
+MAX
+AEX Mini
+Mini AEX荷蘭股指期貨
+Euronext
+68
+MBT
+Micro Bitcoin Futures
+微型比特幣期貨
+CME
+69
+MCL
+Micro WTI Crude Oil Futures
+微型WTI原油期貨
+NYMEX
+70
+MES
+Micro E-Mini S&P 500 Futures
+微型S&P 500股指期貨
+CME
+71
+MET
+Micro Ether
+微型以太幣期貨
+CME
+72
+MFC
+CAC 40 Mini
+Mini CAC 40股指期貨
+Euronext
+73
+MFS
+Mini MSCI EAFE Futures
+Mini MSCI EAFE指數期貨
+ICE
+74
+MGC
+Micro Gold Futures
+微型黃金期貨
+CME
+75
+MME
+MSCI Emerging Markets Index Futures
+MSCI新興市場指數期貨
+ICE
+76
+MNQ
+Micro E-Mini Nasdaq-100 Futures
+微型Nasdaq-100股指期貨
+CME
+77
+MP
+Mexican Peso Futures
+墨西哥披索期貨
+CME
+78
+MURA
+MSCI China
+MSCI中國指數期貨
+Eurex
+79
+N6
+New Zealand Dollar Futures
+紐西蘭幣期貨
+CME
+80
+NG
+Henry Hub Natural Gas Futures
+Henry Hub天然氣期貨
+NYMEX
+81
+NIY
+Nikkei 225 Yen Futures
+日圓計價日經225期貨
+CME
+82
+NKD
+Nikkei 225 Dollar Futures
+美元計價日經225期貨
+CME
+83
+NOK
+Norwegian Krone
+挪威克朗期貨
+CME
+84
+NQ
+E-Mini Nasdaq-100 Futures
+E-mini Nasdaq-100股指期貨
+CME
+85
+OJ
+Orange Juice Futures
+柳橙汁期貨
+ICE
+86
+PA
+Palladium Futures
+鈀金期貨
+NYMEX
+87
+PJY
+Pound/Yen Futures
+英鎊／日圓交叉匯率期貨
+CME
+88
+PL
+Platinum Futures
+白金期貨
+NYMEX
+89
+PRK
+Pork Cutout
+豬肉分切價格期貨
+CME
+90
+PSI
+PSI 20
+葡萄牙PSI 20股指期貨
+Euronext
+91
+QG
+Natural Gas Mini Futures
+Mini天然氣期貨
+NYMEX
+92
+RB
+RBOB Gasoline Futures
+RBOB汽油期貨
+NYMEX
+93
+RM
+Robusta Coffee Futures
+羅布斯塔咖啡期貨
+ICE
+94
+RP
+Euro-British Pound Futures
+歐元／英鎊交叉匯率期貨
+CME
+95
+RS
+Canola Futures
+加拿大油菜籽期貨
+ICE
+96
+RTY
+E-Mini Russell 2000
+E-mini Russell 2000股指期貨
+CME
+97
+RY
+Euro/Yen Futures
+歐元／日圓交叉匯率期貨
+CME
+98
+SB
+Sugar #11 Futures
+11號原糖期貨
+ICE
+99
+SEK
+Swedish Krona
+瑞典克朗期貨
+CME
+100
+SI
+Silver Futures
+白銀期貨
+CME
+101
+SIL
+Micro Silver Futures
+微型白銀期貨
+CME
+102
+SIR
+INR/USD
+印度盧比／美元期貨
+CME
+103
+SO3
+3-Month SONIA
+3個月SONIA利率期貨
+ICE
+104
+SR1
+1-Month SOFR Futures
+1個月SOFR利率期貨
+CME
+105
+SR3
+3-Month SOFR Futures
+3個月SOFR利率期貨
+CME
+106
+T6
+South African Rand Futures
+南非蘭特期貨
+CME
+107
+TN
+Ultra 10-Year US Treasury Note
+Ultra 10年期美國公債期貨
+CBOT
+108
+TTF
+Dutch TTF Natural Gas Futures
+荷蘭TTF天然氣期貨
+CME*
+109
+UB
+Ultra US Treasury Bond Futures
+Ultra美國長期公債期貨
+CBOT
+110
+US
+30-Year US Treasury Bond Future
+30年期美國公債期貨
+CBOT
+111
+VX
+VIX Futures
+VIX波動率指數期貨
+CBOE
+112
+VXM
+Mini VIX Futures
+Mini VIX期貨
+CBOE
+113
+XAE
+E-Mini Energy Select Sector Futures
+E-mini能源類股指數期貨
+CME
+114
+XAF
+E-Mini Financial Select Sector Futures
+E-mini金融類股指數期貨
+CME
+115
+XAI
+E-Mini Industrial Select Sector Futures
+E-mini工業類股指數期貨
+CME
+116
+XC
+Corn Mini Futures
+Mini玉米期貨
+CBOT
+117
+YM
+Dow Futures Mini
+E-mini道瓊股指期貨
+CBOT
+118
+ZC
+Corn Futures
+玉米期貨
+CBOT
+119
+ZF
+5-Year Treasury Note Futures
+5年期美國公債期貨
+CBOT
+120
+ZL
+Soybean Oil Futures
+黃豆油期貨
+CBOT
+121
+ZM
+Soybean Meal Futures
+黃豆粉期貨
+CBOT
+122
+ZN
+10-Year Treasury Note Futures
+10年期美國公債期貨
+CBOT
+123
+ZO
+Oats Futures
+燕麥期貨
+CBOT
+124
+ZQ
+30-Day Fed Funds Future
+30日聯邦基金利率期貨
+CBOT
+125
+ZR
+Rough Rice Futures
+粗米期貨
+CBOT
+126
+ZRPA
+MSCI Europe
+MSCI歐洲指數期貨
+Eurex
+127
+ZS
+Soybean Futures
+黃豆期貨
+CBOT
+128
+ZT
+2-Year Treasury Note Futures
+2年期美國公債期貨
+CBOT
+129
+ZTWA
+MSCI Emerging Markets Asia
+MSCI亞洲新興市場指數期貨
+Eurex
+130
+ZW
+Wheat Futures
+小麥期貨
+CBOT
+
+
+
+
+使用前需要注意
+C與CC在官方清單中均被描述為可可期貨，需要依你實際下載檔案及合約規格再確認兩者差異。 
+TTF交易所欄位以上表官方頁面的CME標示為準，但正式研究前仍應核對實際合約來源。 
+ES／MES、NQ／MNQ、RTY／M2K、GC／MGC、SI／SIL、CL／MCL等是相同母市場的不同合約規模，B腿排名時不能當成獨立市場重複計權。 
+這份是截至2026年9月官方產品頁的130項清單；你的實際下載資料夾仍應作一次檔名對帳。
+
