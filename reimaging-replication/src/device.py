@@ -6,12 +6,13 @@ import torch
 
 
 def get_device(prefer_gpu: bool = True) -> torch.device:
-    """Select the discrete DirectML GPU, then CUDA, then CPU."""
+    """依序選擇獨立 DirectML GPU、CUDA，最後才退回 CPU。"""
     if prefer_gpu:
         try:
             import torch_directml
 
             requested_id = int(os.environ.get("DIRECTML_DEVICE_ID", "1"))
+            # 本機 DirectML 1 對應 RX 9070 XT，DirectML 0 對應 AMD 內顯。
             count = torch_directml.device_count()
             if requested_id < 0 or requested_id >= count:
                 raise ValueError(

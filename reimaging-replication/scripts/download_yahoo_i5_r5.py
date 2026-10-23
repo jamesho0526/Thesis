@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download Yahoo Finance data and conservatively clean split/outlier rows."""
+"""下載 Yahoo Finance 資料，並保守清理拆股與異常值資料列。"""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from src.yahoo_cleaning import clean_tickers
 
 
 def parse_args() -> argparse.Namespace:
+    # 日期範圍要足夠寬，才能建立第一個五日輸入視窗。
     parser = argparse.ArgumentParser()
     parser.add_argument("tickers", nargs="+", help="Yahoo tickers, e.g. AAPL MSFT")
     parser.add_argument("--start", default="1992-12-01")
@@ -27,6 +28,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    # 清理函式分別寫出原始資料、建模資料與拒絕資料 audit，
+    # 讓資料品質決策可以重現。
     clean_tickers(args.tickers, args.output_dir, start=args.start, end=args.end)
     print(f"Wrote raw, cleaned, and rejected files to {args.output_dir.resolve()}")
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train one resource-conscious I5/R5 CNN with a 1993-2000/2001-2019 split."""
+"""使用節省資源的 I5/R5 CNN，依 1993-2000/2001-2019 進行訓練與 OOS 評估。"""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from src import data_utils, device, models, training, visualization
 
 
 def main() -> None:
+    # 這些預設值實作適合本機資源的五模型 I5 ensemble。
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-root", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -40,6 +41,8 @@ def main() -> None:
     train_pairs, test_pairs, fallback = data_utils.chronological_split(
         pairs, 1993, 2000, 2001, 2019
     )
+    # S&P 復現必須遵守論文切分：OOS 年份絕不能傳給
+    # random_train_val_split 或訓練用 DataLoader。
     if fallback:
         print(
             "Requested 1993-2000/2001-2019 split is unavailable; "
@@ -54,6 +57,8 @@ def main() -> None:
         train_pairs, "Ret_5d", cap, image_width=15, image_height=32
     )
     pixel_mean, pixel_std = train_data.pixel_statistics()
+    # 使用僅由訓練資料計算的統計量標準化 S&P 與 transfer 市場影像；
+    # 使用測試市場統計量會造成資料洩漏。
     train_data.set_normalization(pixel_mean, pixel_std)
     print(f"Training pixel z-score: mean={pixel_mean:.6f}, std={pixel_std:.6f}")
     compute_device = device.get_device()
@@ -69,6 +74,8 @@ def main() -> None:
     ensemble_probabilities = []
     histories = {}
     for seed in seeds:
+        # 同一個 seed 同時控制權重初始化、樣本切分與 DataLoader shuffle，
+        # 讓每個 ensemble 成員都能獨立重現。
         random.seed(seed)
         np.random.seed(seed)
         torch.manual_seed(seed)
@@ -103,6 +110,7 @@ def main() -> None:
         ensemble_probabilities.append(probabilities)
         histories[str(seed)] = history
     ensemble = torch.stack(ensemble_probabilities).mean(dim=0)
+    # 平均分類機率，而不是平均硬標籤，以形成最終 ensemble 預測。
     labels = torch.cat([labels for _, labels in test_loader], dim=0)
     predictions = ensemble.argmax(dim=1)
     test_acc = float((predictions == labels).float().mean().item())

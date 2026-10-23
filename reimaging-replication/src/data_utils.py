@@ -20,7 +20,7 @@ BYTES_PER_SAMPLE = IMAGE_HEIGHT * IMAGE_WIDTH * np.dtype(IMAGE_DTYPE).itemsize
 
 @dataclass(frozen=True)
 class DataFilePair:
-    """Container linking an image .dat file to its label .feather file."""
+    """連結影像 .dat 檔與標籤 .feather 檔的資料容器。"""
 
     image_path: Path
     label_path: Path
@@ -66,7 +66,7 @@ class FinancialImageDataset(Dataset):
     Dataset backed by numpy.memmap images and pandas label files.
 
     The dataset stores a sequence of (memmap, labels) tuples. Each memmap shares the
-    same feature dimensions (64xN grayscale images). The labels array stores binary
+    same feature dimensions (HxN grayscale images). The labels array stores binary
     class IDs (0 for down, 1 for up). ``image_width`` is 15 for I5 and 60 for
     the existing 20-day datasets.
     """
@@ -92,6 +92,7 @@ class FinancialImageDataset(Dataset):
         self._offsets: List[int] = []
         total = 0
         for pair in file_pairs:
+            # 使用 memmap 將大型影像檔保留在磁碟，只把目前要求的樣本載入記憶體。
             img_shape = self._infer_memmap_shape(pair.image_path, image_height, image_width)
             if max_samples_per_file:
                 img_shape = (min(max_samples_per_file, img_shape[0]),) + img_shape[1:]
@@ -137,6 +138,7 @@ class FinancialImageDataset(Dataset):
         file_idx, local_idx = self._locate_index(index)
         images, labels = self._records[file_idx]
         image = torch.from_numpy(np.array(images[local_idx], dtype=np.float32)).unsqueeze(0)
+        # 套用由訓練資料計算的 z-score；預設值只供未設定標準化的舊呼叫端相容使用。
         image = (image - self.normalization_mean) / self.normalization_std
         label = torch.tensor(labels[local_idx], dtype=torch.long)
         return image, label
@@ -148,6 +150,7 @@ class FinancialImageDataset(Dataset):
         self.normalization_std = float(std)
 
     def pixel_statistics(self) -> Tuple[float, float]:
+        # 只使用選定的訓練檔案計算整體像素平均值與標準差。
         total = 0
         value_sum = 0.0
         square_sum = 0.0
@@ -161,7 +164,7 @@ class FinancialImageDataset(Dataset):
         return mean, float(np.sqrt(variance))
 
     def metadata_frame(self) -> pd.DataFrame:
-        """Return concatenated metadata aligned with the dataset order."""
+        """回傳與資料集順序對齊的合併後 metadata。"""
         if not self._metadata:
             raise RuntimeError("metadata not loaded")
         return pd.concat(self._metadata, axis=0, ignore_index=True)
@@ -174,11 +177,13 @@ def chronological_split(
     test_start: int,
     test_end: int,
 ) -> Tuple[List[DataFilePair], List[DataFilePair], bool]:
-    """Select file pairs by year for train/validation and test splits."""
+    """在隨機切分 Train/Val 前，先依年份選取檔案。"""
     train_val = [p for p in file_pairs if p.year and train_start <= p.year <= train_end]
     test_pairs = [p for p in file_pairs if p.year and test_start <= p.year <= test_end]
     fallback = False
     if not train_val:
+        # 期貨資料不涵蓋論文年份，因此只在延伸實驗使用時間順序 fallback，
+        # 並將這個選擇回報給使用者。
         fallback = True
         sorted_pairs = sorted(file_pairs, key=lambda p: p.year or 0)
         cutoff = max(1, int(0.7 * len(sorted_pairs)))
@@ -190,7 +195,7 @@ def chronological_split(
 def random_train_val_split(
     dataset: FinancialImageDataset, ratio: float, seed: int
 ) -> Tuple[Subset[FinancialImageDataset], Subset[FinancialImageDataset]]:
-    """Chronologically shuffles samples for train/validation splits."""
+    """只對已選定的樣本內資料集進行隨機切分。"""
     if len(dataset) <= 1:
         indices = list(range(len(dataset)))
         subset = Subset(dataset, indices)

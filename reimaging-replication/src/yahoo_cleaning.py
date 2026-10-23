@@ -1,4 +1,4 @@
-"""Yahoo Finance download and conservative daily OHLCV cleaning."""
+"""下載 Yahoo Finance 資料，並保守清理每日 OHLCV。"""
 
 from __future__ import annotations
 
@@ -17,7 +17,9 @@ def download_history(
     start: str = "1992-12-01",
     end: str = "2020-01-01",
 ) -> pd.DataFrame:
-    """Download one ticker with raw prices, actions, and Yahoo Adj Close."""
+    """下載單一 ticker 的原始價格、公司行動與 Yahoo Adj Close。"""
+    # auto_adjust=False 保留原始 OHLC，讓 clean_history 能將同一個
+    # 明確的拆股調整因子一致套用到所有價格欄位。
     try:
         import yfinance as yf
     except ImportError as exc:
@@ -43,7 +45,7 @@ def download_history(
 
 
 def _robust_return_limit(log_returns: pd.Series, hard_limit: float) -> float:
-    """Return a high threshold while avoiding deletion of ordinary crashes."""
+    """回傳較高的異常值門檻，同時避免刪除一般市場崩跌。"""
     values = log_returns.replace([np.inf, -np.inf], np.nan).dropna()
     if values.empty:
         return hard_limit
@@ -58,7 +60,7 @@ def clean_history(
     *,
     outlier_hard_limit: float = 0.75,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Return cleaned rows and an audit table of rejected rows.
+    """回傳清理後資料，以及被拒絕資料列的 audit 表。
 
     Yahoo's raw OHLC is retained in the audit/output columns. The modeling
     columns are split-adjusted with Adj Close / Close, so a stock split is
@@ -80,6 +82,7 @@ def clean_history(
         work[column] = pd.to_numeric(work[column], errors="coerce")
 
     work["AdjFactor"] = work["Adj Close"] / work["Close"]
+    # 將 Yahoo 的調整後收盤價比例套用至 OHLC，並對成交量做反向縮放。
     work["AdjOpen"] = work["Open"] * work["AdjFactor"]
     work["AdjHigh"] = work["High"] * work["AdjFactor"]
     work["AdjLow"] = work["Low"] * work["AdjFactor"]
@@ -99,13 +102,14 @@ def clean_history(
         .isna()
         .any(axis=1)
     )
+    # 明確拒絕格式錯誤的資料列；不插值，也不靜默修補會影響影像視窗的資料。
     invalid |= (work[PRICE_COLUMNS + ["AdjOpen", "AdjHigh", "AdjLow", "AdjClose"]] <= 0).any(axis=1)
     invalid |= work["Volume"].isna() | (work["Volume"] < 0)
     invalid |= work["AdjHigh"] < work[["AdjOpen", "AdjClose"]].max(axis=1)
     invalid |= work["AdjLow"] > work[["AdjOpen", "AdjClose"]].min(axis=1)
     invalid |= work["LogAdjReturn"].abs() > limits
 
-    # A raw split jump that remains after adjustment is a Yahoo data error.
+    # 調整後仍存在的原始拆股跳躍，視為 Yahoo 資料錯誤。
     raw_jump = work["RawReturn"].abs() > 0.40
     split_nearby = work["Stock Splits"].ne(0) | group["Stock Splits"].shift().fillna(0).ne(0)
     adjusted_jump = work["AdjReturn"].abs() > outlier_hard_limit
@@ -132,9 +136,10 @@ def clean_tickers(
     start: str = "1992-12-01",
     end: str = "2020-01-01",
 ) -> None:
-    """Download, clean, and write one CSV plus one audit CSV per ticker."""
+    """下載、清理資料，並為每個 ticker 寫出一份 CSV 與 audit CSV。"""
     output_dir.mkdir(parents=True, exist_ok=True)
     for ticker in tickers:
+        # 將原始、清理後與拒絕資料放在一起，方便日後稽核每次排除。
         raw = download_history(ticker, start=start, end=end)
         raw.to_csv(output_dir / f"{ticker}_raw.csv.gz", index=False, compression="gzip")
         cleaned, rejected = clean_history(raw)

@@ -18,7 +18,8 @@ def render_i5(
     volume: np.ndarray,
     returns: np.ndarray | None = None,
 ) -> np.ndarray:
-    """Render one I5 window after reconstructing prices from daily returns."""
+    """使用日報酬率重構價格後，繪製一個 I5 視窗。"""
+    # 前 26 列存放 OHLC 與 MA 像素；最後 6 列專門保留給成交量柱。
     raw_ohlc = window[:, :4]
     if returns is None:
         returns = np.zeros(len(raw_ohlc), dtype=float)
@@ -32,6 +33,8 @@ def render_i5(
     ):
         raise ValueError("invalid OHLC window")
     reconstructed_close = np.ones(5, dtype=float)
+    # 將第一天收盤價固定為 1，再使用調整後日報酬率重構後續價格，
+    # 消除拆股與股利造成的價格幾何變形。
     for day in range(1, 5):
         reconstructed_close[day] = reconstructed_close[day - 1] * (1.0 + returns[day])
     ratios = raw_ohlc / raw_ohlc[:, 3:4]
@@ -40,6 +43,7 @@ def render_i5(
         pd.Series(reconstructed_close).rolling(5, min_periods=1).mean().to_numpy()
     )
     price_values = np.concatenate((adjusted_ohlc.reshape(-1), moving_average))
+    # 尋找局部極值時一併納入 MA5，讓所有價格特徵共用同一個垂直座標系。
     pmin = float(price_values.min())
     prange = max(float(price_values.max() - pmin), 1e-8)
     vmax = max(float(volume.max()), 0.0)
@@ -58,12 +62,15 @@ def render_i5(
         image[close_row, start + 2] = 255
         image[row(moving_average[day]), start + 1] = 255
         if vmax > 0:
+            # 成交量只繪製在每個三欄交易日區塊的中間欄，
+            # 並由影像底部向上填滿。
             height = max(1, int(round((volume[day] / vmax) * (IMG_HEIGHT - VOLUME_START))))
             image[IMG_HEIGHT - height : IMG_HEIGHT, start + 1] = 255
     return image
 
 
 def _read_ohlcv(path: Path, source: str) -> pd.DataFrame:
+    # S&P 檔案包含欄位標題；期貨檔案則是沒有標題的七欄文字檔。
     if source == "sp500":
         frame = pd.read_csv(path)
         frame["Date"] = pd.to_datetime(frame["Date"], errors="coerce")
@@ -90,7 +97,7 @@ def build_i5_r5_files(
     start: str = "1993-01-01",
     end: str = "2019-12-31",
 ) -> dict[str, int]:
-    """Build yearly 64x15 I5 images and R5 labels from CSV/TXT price files."""
+    """從 CSV/TXT 價格檔建立按年份儲存的 32x15 I5 影像與 R5 標籤。"""
     pattern = "*.csv" if source == "sp500" else "*.txt"
     files = sorted(source_dir.glob(pattern))
     if not files:
@@ -114,6 +121,8 @@ def build_i5_r5_files(
         volume = frame["Volume"].fillna(0).clip(lower=0).to_numpy(float)
         raw_closes = frame["Close"].to_numpy(float)
         adjusted_closes = frame.get("Adj Close", frame["Close"])
+        # Yahoo S&P 檔案可能包含 Adj Close；期貨資料使用自身的收盤價，
+        # 因此沒有 Adj Close 時退回使用 Close。
         adjusted_closes = pd.to_numeric(adjusted_closes, errors="coerce").to_numpy(float)
         returns = pd.Series(adjusted_closes).pct_change().to_numpy(float).copy()
         returns[0] = 0.0
@@ -132,6 +141,8 @@ def build_i5_r5_files(
             if not (math.isfinite(base) and math.isfinite(future) and base > 0 and future > 0):
                 continue
             year = int(pd.Timestamp(dates[end_idx]).year)
+            # 每年儲存成獨立檔案，先執行訓練/OOS 年份隔離，
+            # 再進行任何隨機樣本切分。
             by_year.setdefault(year, []).append(image.reshape(-1))
             labels.setdefault(year, []).append(
                 {

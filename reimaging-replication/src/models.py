@@ -9,7 +9,7 @@ from .data_utils import IMAGE_HEIGHT, IMAGE_WIDTH
 
 
 class ConvBlock(nn.Module):
-    """Convolutional block matching the paper's Figure 7 structure."""
+    """符合論文圖 7 結構的卷積區塊。"""
 
     def __init__(
         self,
@@ -19,6 +19,7 @@ class ConvBlock(nn.Module):
         dilation: Tuple[int, int] = (1, 1),
     ) -> None:
         super().__init__()
+        # Padding 讓池化前的寬度與卷積後空間尺寸維持一致。
         padding = (
             ((5 - 1) * dilation[0]) // 2,
             ((3 - 1) * dilation[1]) // 2,
@@ -42,7 +43,7 @@ class ConvBlock(nn.Module):
 
 
 class TradingCNN(nn.Module):
-    """CNN used throughout the replication scripts."""
+    """復現程式共用的 CNN 模型。"""
 
     def __init__(
         self,
@@ -50,6 +51,8 @@ class TradingCNN(nn.Module):
         num_blocks: int = 3,
     ) -> None:
         super().__init__()
+        # I5 使用 32x15 輸入與兩個卷積區塊；其他舊版設定仍保留
+        # 可調整深度的架構，以維持相容性。
         if num_blocks < 1 or num_blocks > 4:
             raise ValueError("num_blocks must be between 1 and 4")
         channels = [64, 128, 256, 512][:num_blocks]
@@ -66,6 +69,8 @@ class TradingCNN(nn.Module):
                     )
                 )
             else:
+                # 嚴格 I5 路徑的兩個區塊都使用 stride=1、dilation=1，
+                # 展平後會得到 15,360 維特徵。
                 layers.append(ConvBlock(in_channels, out_channels))
             in_channels = out_channels
         self.features = nn.Sequential(*layers)
@@ -76,6 +81,8 @@ class TradingCNN(nn.Module):
         self.apply(self._init_weights)
 
     def _infer_feature_dim(self, input_shape: Tuple[int, int, int]) -> int:
+        # 根據實際卷積輸出推導分類器輸入維度，讓形狀錯誤及早發現，
+        # 避免無聲地產生錯誤展平結果。
         with torch.no_grad():
             dummy = torch.zeros(1, *input_shape)
             out = self.features(dummy)
@@ -83,6 +90,7 @@ class TradingCNN(nn.Module):
 
     @staticmethod
     def _init_weights(module: nn.Module) -> None:
+        # 使用 Xavier 初始化，以符合指定的 CNN 規格。
         if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
             nn.init.xavier_uniform_(module.weight)
             if module.bias is not None:

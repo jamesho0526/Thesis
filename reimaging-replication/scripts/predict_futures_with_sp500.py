@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply the trained S&P 500 I5/R5 ensemble to futures images."""
+"""將訓練好的 S&P 500 I5/R5 ensemble 套用至期貨影像。"""
 
 from __future__ import annotations
 
@@ -19,12 +19,14 @@ from src import data_utils, device, models, training
 
 
 def _max_drawdown(returns: pd.Series) -> float:
+    # 將期間策略報酬轉為資產曲線，並計算從高點到低點的最大跌幅。
     equity = (1.0 + returns.fillna(0.0)).cumprod()
     drawdown = equity / equity.cummax() - 1.0
     return float(drawdown.min())
 
 
 def _annualized_sharpe(returns: pd.Series) -> float:
+    # 這是延伸實驗報告使用的近似日頻 Sharpe。
     clean = returns.dropna()
     if len(clean) < 2 or clean.std(ddof=1) == 0:
         return 0.0
@@ -32,12 +34,16 @@ def _annualized_sharpe(returns: pd.Series) -> float:
 
 
 def _non_overlapping(frame: pd.DataFrame) -> pd.DataFrame:
+    # R5 視窗本來就會重疊；將每個合約每五筆取一筆，
+    # 再把報酬視為連續持有。
     ordered = frame.sort_values(["Symbol", "Date"]).copy()
     position = ordered.groupby("Symbol", sort=False).cumcount()
     return ordered.loc[position.mod(5).eq(0)].reset_index(drop=True)
 
 
 def _metrics(frame: pd.DataFrame) -> dict[str, float]:
+    # 期貨是時間序列延伸，因此報告每個商品與按日期計算的 portfolio 統計，
+    # 而不是股票橫斷面 decile spread。
     actual = frame["actual"].to_numpy()
     predicted = frame["prediction"].to_numpy()
     accuracy = float((actual == predicted).mean()) if len(frame) else 0.0
@@ -113,6 +119,8 @@ def main() -> None:
         history = json.load(handle)
     pixel_mean = float(history["pixel_mean"])
     pixel_std = float(history["pixel_std"])
+    # 完全重用 S&P 訓練標準化參數；不可從期貨重新計算，
+    # 因為這是 frozen cross-market transfer 實驗。
 
     pairs = data_utils.discover_file_pairs(
         args.data_root,
@@ -140,12 +148,13 @@ def main() -> None:
         if not checkpoint.exists():
             raise FileNotFoundError(f"Missing S&P checkpoint: {checkpoint}")
         model = models.TradingCNN(input_shape=(1, 32, 15), num_blocks=2).to(compute_device)
-        # These checkpoints were created by this project and contain DirectML
-        # device metadata that PyTorch 2.4 cannot load with weights_only=True.
+        # 這些 checkpoint 由本專案建立，包含 DirectML 裝置資訊；
+        # PyTorch 2.4 無法使用 weights_only=True 載入。
         state_dict = torch.load(
             checkpoint, map_location=compute_device, weights_only=False
         )
         model.load_state_dict(state_dict)
+        # 推論不更新權重，只保留 Softmax 機率供 ensemble 平均。
         ensemble_probabilities.append(training.predict(model, loader, compute_device))
 
     ensemble = torch.stack(ensemble_probabilities).mean(dim=0)

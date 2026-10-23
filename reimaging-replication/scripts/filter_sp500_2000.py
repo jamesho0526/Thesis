@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Filter company-named Yahoo CSV files using the 2000-12-29 S&P list."""
+"""使用 2000-12-29 S&P 名單篩選以公司名稱命名的 Yahoo CSV 檔。"""
 
 from __future__ import annotations
 
@@ -42,6 +42,7 @@ ALIASES = {
 
 
 def normalize(value: str) -> str:
+    # 模糊比對前，先統一歷史 ticker 與公司名稱的拼法。
     value = value.upper().replace("&", " AND ")
     value = re.sub(r"\([^)]*\)", " ", value)
     value = re.sub(
@@ -58,6 +59,8 @@ def read_symbols(path: Path) -> list[str]:
 
 
 def yahoo_name(symbol: str) -> str | None:
+    # 歷史 ticker 可能已無法在 Yahoo 解析；呼叫端會記錄為未匹配，
+    # 不會靜默產生不存在的對應。
     try:
         import yfinance as yf
 
@@ -68,6 +71,7 @@ def yahoo_name(symbol: str) -> str | None:
 
 
 def load_or_fetch_names(symbols: list[str], cache_path: Path, workers: int) -> dict[str, str]:
+    # 快取成功的 Yahoo 查詢，避免重複篩選時再次請求相同名稱。
     names: dict[str, str] = {}
     if cache_path.exists():
         names.update(json.loads(cache_path.read_text(encoding="utf-8")))
@@ -104,6 +108,8 @@ def choose_file(
     files: list[Path],
     min_score: float,
 ) -> tuple[Path | None, str, float, list[Path]]:
+    # 優先使用完全相符的 ticker 檔名，再以公司名稱相似度比對，
+    # 並檢查歧義與信心分數。
     by_stem = {normalize(path.stem): path for path in files}
     direct = by_stem.get(normalize(symbol))
     if direct:
@@ -127,6 +133,7 @@ def choose_file(
 
 
 def filter_date_range(source: Path, destination: Path, start: str, end: str) -> int:
+    # 只保留指定樣本期間，同時保留來源的所有欄位，供後續清理與稽核。
     frame = pd.read_csv(source)
     date_column = next((column for column in ("Date", "Datetime", "date") if column in frame), None)
     if date_column is None:
@@ -168,6 +175,7 @@ def main() -> None:
     if not files:
         raise SystemExit(f"No CSV files found in {args.source_dir}")
     names = load_or_fetch_names(symbols, args.cache, args.workers)
+    # 每個來源檔最多只能分配一次，避免相似歷史公司名稱造成重複證券。
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     rows = []

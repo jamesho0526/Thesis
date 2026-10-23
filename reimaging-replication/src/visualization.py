@@ -8,6 +8,7 @@ import pandas as pd
 
 
 def plot_training_history(history: Dict[str, list], output_path: Path) -> None:
+    # 儲存精簡的 loss 曲線，用來檢查收斂與 early stopping。
     output_path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(8, 4))
     epochs = history.get("epochs", [])
@@ -22,6 +23,7 @@ def plot_training_history(history: Dict[str, list], output_path: Path) -> None:
 
 
 def plot_cumulative_spread(decile_df: pd.DataFrame, output_path: Path, date_column: str = "Date") -> None:
+    # 保留此函式以相容外部可能使用的 decile 結果表。
     if decile_df.empty:
         return
     output_path.parent.mkdir(parents=True, exist_ok=True)

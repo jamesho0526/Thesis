@@ -20,6 +20,7 @@ def train_one_epoch(
     total_epochs: int | None = None,
     progress: bool = True,
 ) -> Tuple[float, float]:
+    # 對訓練子集執行一次最佳化；長時間 GPU 訓練時可選擇顯示進度。
     model.train()
     running_loss = 0.0
     correct = 0
@@ -61,6 +62,7 @@ def train_one_epoch(
 
 @torch.no_grad()
 def evaluate(model, loader, criterion, device) -> Tuple[float, float]:
+    # 評估階段不計算梯度，也不更新模型參數。
     model.eval()
     running_loss = 0.0
     correct = 0
@@ -88,7 +90,9 @@ def fit_model(
     checkpoint_path: Path,
     progress: bool = True,
 ) -> Dict[str, List[float]]:
-    """Train the model with early stopping and persist the best checkpoint."""
+    """使用 early stopping 訓練模型，並保存最佳 checkpoint。"""
+    # 每個 seed 都建立新的 optimizer；early stopping 後只保存並恢復
+    # 驗證損失最低的模型。
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     history = {"epochs": [], "train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
@@ -145,7 +149,8 @@ def fit_model(
 
 @torch.no_grad()
 def predict(model: nn.Module, loader: DataLoader, device: torch.device) -> torch.Tensor:
-    """Return class probabilities for loader samples."""
+    """回傳資料載入器樣本的分類機率。"""
+    # 回傳 CPU tensor，避免 ensemble 平均與 CSV 匯出時持續占用 GPU 記憶體。
     model.eval()
     outputs = []
     for images, _ in loader:
